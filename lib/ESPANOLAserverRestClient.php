@@ -50,6 +50,22 @@ class ESPANOLAserverRestClient{
         return json_decode(self::_Call('/getValoresFinales/',Array(
         )));
     }
+    
+    /**
+	 * @param float $VT
+	 * @param float $ALI
+	 * @param float $LRI
+	 * @param float $SI
+	 * @return Tratamiento
+	 */
+	public function getTratamiento($VT,$ALI,$LRI,$SI){
+		return json_decode(self::_Call('/getTratamiento/ VT/ ALI/ LRI/ SI/',Array(
+			'VT'=>$VT,
+			'ALI'=>$ALI,
+			'LRI'=>$LRI,
+			'SI'=>$SI
+		)));
+	}
 }
 
 /**
@@ -102,4 +118,77 @@ class ValoresFinales{
 	 */
 	public $SFMA;
 }
+
+/**
+ * @pw_element string $estado
+ * @pw_element int $volumen_retirar
+ * @pw_element string $aviso_volumen_retirar
+ * @pw_element string $aviso_sal_inicial
+ * @pw_element string $aviso_acido
+ * @pw_element int $acido_total
+ * @pw_element int $acido_clorhidrico
+ * @pw_element int $acido_citrico
+ * @pw_element int $acido_lactico
+ * @pw_element int $acido_total
+ * @pw_element string $aviso_salmuera
+ * @pw_element string $aviso_salmuera_blanca
+ * @pw_element int $sal
+ * @pw_element string $incompleto
+ * @pw_complex Tratamiento
+ */
+class Tratamiento{
+	/**
+	 * @var string
+	 */
+	public $estado;
+	/**
+	 * @var int
+	 */
+	public $volumen_retirar;
+	/**
+	 * @var string
+	 */
+	public $aviso_volumen_retirar;
+	/**
+	 * @var string
+	 */
+	public $aviso_sal_inicial;
+	/**
+	 * @var string
+	 */
+	public $aviso_acido;
+	/**
+	 * @var int
+	 */
+	public $acido_total;
+	/**
+	 * @var int
+	 */
+	public $acido_clorhidrico;
+	/**
+	 * @var int
+	 */
+	public $acido_citrico;
+	/**
+	 * @var int
+	 */
+	public $acido_lactico;
+	/**
+	 * @var int
+	 */
+	public $aviso_salmuera;
+	/**
+	 * @var string
+	 */
+	public $aviso_salmuera_blanca;
+	/**
+	 * @var int
+	 */
+	public $sal;
+	/**
+	 * @var string
+	 */
+	public $incompleto;
+}
+
 

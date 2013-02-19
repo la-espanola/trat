@@ -1,6 +1,4 @@
 <?php
-require_once('/usr/home/test.laespanola.es/web/soap/lib/nusoap.php');
-
 class page_tratamiento extends Page {
     function init(){
         parent::init();
@@ -25,12 +23,10 @@ class page_tratamiento extends Page {
 	        	$this->add('JQMButton')->set('Completar datos')->href($this->api->getDestinationURL('index'));
     		}
     		else {
-	    		
-		    	//$webservice = new nusoap_client('http://test.laespanola.es/soap/server.php?wdsl');
-		    	$webservice = new nusoap_client('http://80.38.86.3:1111/servicios/server.php');
-		    	$result = $webservice->call('getTratamiento',
-		              array('VT' => $_GET['vt'], 'ALI'=>$_GET['ali'], 'LRI'=>$_GET['lri'], 'SI'=>$_GET['si']));
-		        if (empty($result['estado'])) {
+	    		$restcli=new ESPANOLAserverRestClient();
+	    		$result=new Tratamiento;
+	    		$result=$restcli->getTratamiento($_GET['vt'], $_GET['ali'], $_GET['lri'], $_GET['si']);
+		        if (empty($result->estado)) {
 			        $this->add('HtmlElement')->setElement('P')->set('ERROR CONECTANDO AL SERVICIO WEB');
 			        $this->api->stickyGET('vt');
 			        $this->api->stickyGET('ali');
@@ -45,27 +41,27 @@ class page_tratamiento extends Page {
 		        //ESTADO    
 		        $lista->add('HtmlElement')->setElement('li')->set('ESTADO')->setAttr('data-role','list-divider');
 			    $estado=$lista->add('HtmlElement')->setElement('li');
-			    $estado->add('H3')->set($result['estado']);
+			    $estado->add('H3')->set($result->estado);
 			    $estado->add('P')->set('AL: '.$_GET['ali'].' LR: '.$_GET['lri'].' Sal: '.$_GET['si']);
-			    if ($result['estado']!='DISPONIBLE') 
+			    if ($result->estado!='DISPONIBLE') 
 			    {
 			        //Tratamiento incompleto
-			        if (!empty($result['incompleto'])) {
-				        $lista->add('HtmlElement')->setElement('li')->set($result['incompleto'])->setAttr('data-theme','e');
+			        if (!empty($result->incompleto)) {
+				        $lista->add('HtmlElement')->setElement('li')->set($result->incompleto)->setAttr('data-theme','e');
 				    	//VOLUMEN
 				    	$lista->add('HtmlElement')->setElement('li')->set('VOLUMEN DE SALMUERA A RETIRAR')->setAttr('data-role','list-divider');
-				    	if ($result['volumen_retirar']>0) 
-			        		$lista->add('HtmlElement')->setElement('li')->set($result['volumen_retirar'].' litros');
+				    	if ($result->volumen_retirar>0) 
+			        		$lista->add('HtmlElement')->setElement('li')->set($result->volumen_retirar.' litros');
 			        	//Acido
 				        $lista->add('HtmlElement')->setElement('li')->set('ÁCIDO A AÑADIR')->setAttr('data-role','list-divider');
-				        if (!empty($result['aviso_acido'])) $lista->add('HtmlElement')->setElement('li')->set($result['aviso_acido']);
+				        if (!empty($result->aviso_acido)) $lista->add('HtmlElement')->setElement('li')->set($result->aviso_acido);
 				        else 
 				        {
-				        	$lista->add('HtmlElement')->setElement('li')->set('TOTAL: '.$result['acido_total'].' litros');
+				        	$lista->add('HtmlElement')->setElement('li')->set('TOTAL: '.$result->acido_total.' litros');
 				        	//$lista->add('HtmlElement')->setElement('ul');
-				        	$lista->add('HtmlElement')->setElement('li')->set('Acido clorhidrico '.$result['acido_clorhidrico'].' litros');
-				        	$lista->add('HtmlElement')->setElement('li')->set('Acido citrico '.$result['acido_citrico'].' kilos');
-				        	$lista->add('HtmlElement')->setElement('li')->set('Acido lactico '.$result['acido_lactico'].' litros');
+				        	$lista->add('HtmlElement')->setElement('li')->set('Acido clorhidrico '.$result->acido_clorhidrico.' litros');
+				        	$lista->add('HtmlElement')->setElement('li')->set('Acido citrico '.$result->acido_citrico.' kilos');
+				        	$lista->add('HtmlElement')->setElement('li')->set('Acido lactico '.$result->acido_lactico.' litros');
 				        }	
 				    	//QUitar cuando se quite el return al implementar el tratamiento incompleto.    
 				    	$this->api->stickyGET('vt');
@@ -75,32 +71,32 @@ class page_tratamiento extends Page {
 			         
 			        //Volumen
 			        $lista->add('HtmlElement')->setElement('li')->set('VOLUMEN DE SALMUERA A RETIRAR')->setAttr('data-role','list-divider');
-			        if ($result['volumen_retirar']>0) 
-			        	$lista->add('HtmlElement')->setElement('li')->set($result['volumen_retirar'].' litros');
-			        if (!empty($result['aviso_volumen_retirar'])) $lista->add('HtmlElement')->setElement('li')->set($result['aviso_volumen_retirar']);
+			        if ($result->volumen_retirar>0) 
+			        	$lista->add('HtmlElement')->setElement('li')->set($result->volumen_retirar.' litros');
+			        if (!empty($result->aviso_volumen_retirar)) $lista->add('HtmlElement')->setElement('li')->set($result->aviso_volumen_retirar);
 			        //Aviso salmuera
-			        if (!empty($result['aviso_salmuera'])) $lista->add('HtmlElement')->setElement('li')->set($result['aviso_salmuera']);
+			        if (!empty($result->aviso_salmuera)) $lista->add('HtmlElement')->setElement('li')->set($result->aviso_salmuera);
 			        //Aviso sal inicial
-			        if (!empty($result['aviso_sal_inicial'])) $lista->add('HtmlElement')->setElement('li')->set($result['aviso_sal_inicial']);
+			        if (!empty($result->aviso_sal_inicial)) $lista->add('HtmlElement')->setElement('li')->set($result->aviso_sal_inicial);
 			        //Aviso estandar salmuera blanca
-					$lista->add('HtmlElement')->setElement('li')->set($result['aviso_salmuera_blanca']);
+					$lista->add('HtmlElement')->setElement('li')->set($result->aviso_salmuera_blanca);
 			        //Acido
 			        $lista->add('HtmlElement')->setElement('li')->set('ÁCIDO A AÑADIR')->setAttr('data-role','list-divider');
-			        if (!empty($result['aviso_acido'])) $lista->add('HtmlElement')->setElement('li')->set($result['aviso_acido']);
+			        if (!empty($result->aviso_acido)) $lista->add('HtmlElement')->setElement('li')->set($result->aviso_acido);
 			        else 
 			        {
-			        	$lista->add('HtmlElement')->setElement('li')->set('TOTAL: '.$result['acido_total'].' litros');
+			        	$lista->add('HtmlElement')->setElement('li')->set('TOTAL: '.$result->acido_total.' litros');
 			        	//$lista->add('HtmlElement')->setElement('ul');
-			        	$lista->add('HtmlElement')->setElement('li')->set('Acido clorhidrico '.$result['acido_clorhidrico'].' litros');
-			        	$lista->add('HtmlElement')->setElement('li')->set('Acido citrico '.$result['acido_citrico'].' kilos');
-			        	$lista->add('HtmlElement')->setElement('li')->set('Acido lactico '.$result['acido_lactico'].' litros');
+			        	$lista->add('HtmlElement')->setElement('li')->set('Acido clorhidrico '.$result->acido_clorhidrico.' litros');
+			        	$lista->add('HtmlElement')->setElement('li')->set('Acido citrico '.$result->acido_citrico.' kilos');
+			        	$lista->add('HtmlElement')->setElement('li')->set('Acido lactico '.$result->acido_lactico.' litros');
 			        }
 			        
 			        //Sal
-			        if ($result['sal']>0)
+			        if ($result->sal>0)
 			        {
 			        	$lista->add('HtmlElement')->setElement('li')->set('SAL')->setAttr('data-role','list-divider');
-			        	$lista->add('HtmlElement')->setElement('li')->set('APROXIMADAMENTE '.$result['sal'].' sacos.');
+			        	$lista->add('HtmlElement')->setElement('li')->set('APROXIMADAMENTE '.$result->sal.' sacos.');
 			        }
 			  	}
 			    $this->api->stickyGET('vt');
